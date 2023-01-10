@@ -16,3 +16,6 @@ BG = Colors.BLACK
 
 WHITE_BOARD = Colors.WHITE
 BLACK_BOARD = Colors.BLACK
+
+
+COLOR_CAN_GO = [0, 127, 0]
