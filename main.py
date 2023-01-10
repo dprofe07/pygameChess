@@ -15,8 +15,8 @@ game.set_screen(screen)
 board = Board(screen, 8, 8, square_cells=True)
 game.set_board(board)
 
-board.cell(0, 1).figure = Pawn(board.cell(0, 1), game.black_player)
-
+board.cell(0, 0).figure = Pawn(board.cell(0, 0), game.black_player)
+board.cell(7, 4).figure = Pawn(board.cell(7, 4), game.white_player)
 game.run()
 
 while game.continue_game:
@@ -37,7 +37,8 @@ while game.continue_game:
                     sel_cell = board.cell(*board.selected_cell)
                     if sel_cell.figure.can_move_to(clicked_cell):
                         sel_cell.figure.move_to(clicked_cell)
-                        board.selected_cell = None
+                    board.selected_cell = None
+
 
     screen.fill(BG)
     board.draw()

@@ -9,6 +9,4 @@ class Pawn(Figure):
     def can_move_to(self, cell):
         delta_x = self.cell.col - cell.col
         delta_y = self.cell.row - cell.row
-        if delta_x != 0 or delta_y != -1:
-            return False
-        return True
+        return delta_x == 0 and delta_y == (-1 if (game.black_player == self.player_id) else 1)
