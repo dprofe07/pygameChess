@@ -4,6 +4,7 @@ import pygame
 
 from constants import WIDTH, HEIGHT, BG
 from board import Board
+from figures.bishop import Bishop
 from figures.pawn import Pawn
 from game import game
 
@@ -14,9 +15,10 @@ game.set_screen(screen)
 
 board = Board(screen, 8, 8, square_cells=True)
 game.set_board(board)
-
-board.cell(0, 0).figure = Pawn(board.cell(0, 0), game.black_player)
-board.cell(7, 4).figure = Pawn(board.cell(7, 4), game.white_player)
+for i in range(8):
+    board.cell(i, 6).figure = Pawn(board.cell(i, 6), game.white_player)
+    board.cell(i, 1).figure = Pawn(board.cell(i, 1), game.black_player)
+board.cell(5, 5).figure = Bishop(board.cell(5, 5), game.white_player)
 game.run()
 
 while game.continue_game:
@@ -28,7 +30,7 @@ while game.continue_game:
         elif evt.type == pygame.MOUSEBUTTONDOWN:
             if evt.button == pygame.BUTTON_LEFT:
                 clicked_cell = board.cell_by_coords(evt.pos)
-                if board.selected_cell is None:
+                if board.selected_cell is None or clicked_cell is None:
                     if clicked_cell is None or clicked_cell.figure is None:
                         board.selected_cell = None
                     else:
@@ -38,7 +40,6 @@ while game.continue_game:
                     if sel_cell.figure.can_move_to(clicked_cell):
                         sel_cell.figure.move_to(clicked_cell)
                     board.selected_cell = None
-
 
     screen.fill(BG)
     board.draw()

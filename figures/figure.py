@@ -21,7 +21,6 @@ class Figure:
         raise NotImplementedError()
 
     def move_to(self, cell):
-        print('MOVE_TO()')
         self.cell.figure = None
         if cell.figure is not None:
             game.figure_eaten(cell.figure)
