@@ -6,6 +6,7 @@ from constants import WIDTH, HEIGHT, BG
 from board import Board
 from figures.bishop import Bishop
 from figures.pawn import Pawn
+from figures.rook import Rook
 from game import game
 
 pygame.init()
@@ -18,7 +19,7 @@ game.set_board(board)
 for i in range(8):
     board.cell(i, 6).figure = Pawn(board.cell(i, 6), game.white_player)
     board.cell(i, 1).figure = Pawn(board.cell(i, 1), game.black_player)
-board.cell(5, 5).figure = Bishop(board.cell(5, 5), game.white_player)
+board.cell(5, 5).figure = Rook(board.cell(5, 5), game.black_player)
 game.run()
 
 while game.continue_game:

@@ -14,8 +14,8 @@ class Colors:
 
 BG = Colors.BLACK
 
-WHITE_BOARD = Colors.WHITE
-BLACK_BOARD = Colors.BLACK
+WHITE_BOARD = '#F0D9B5'
+BLACK_BOARD = '#B58863'
 
 
 COLOR_CAN_GO = [0, 127, 0]

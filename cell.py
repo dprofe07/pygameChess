@@ -10,6 +10,9 @@ class Cell:
         self.col = col
         self.figure = None
 
+    def available_for(self, figure):
+        return self.figure is None or self.figure.player_id != figure.player_id
+
     def get_image(self):
         surf = pygame.surface.Surface((self.board.cell_width, self.board.cell_height))
         if (self.row + self.col) % 2 == 0:
