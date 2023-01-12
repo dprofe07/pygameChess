@@ -2,7 +2,7 @@ import pygame
 
 from cell import Cell
 from constants import Colors
-from figures import Queen, Bishop, Rook, Pawn, King, Knight
+from figures import Queen, Bishop, Rook, Pawn, King, Knight, Camel
 from game import game
 
 
@@ -24,11 +24,14 @@ class Board:
 
         self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
 
-    def use_default_position(self, number=0):
+    def use_default_config(self, number=0):
         if number == 0:
+            self.width = self.height = 8
+            self.screen_resized()
+
             self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
 
-            for i in range(8):
+            for i in range(self.width):
                 self.cell(i, 1).figure = Pawn(self.cell(i, 1), game.black_player)
                 self.cell(i, 6).figure = Pawn(self.cell(i, 6), game.white_player)
 
@@ -49,6 +52,39 @@ class Board:
             self.cell(5, 7).figure = Bishop(self.cell(5, 7), game.white_player)
             self.cell(6, 7).figure = Knight(self.cell(6, 7), game.white_player)
             self.cell(7, 7).figure = Rook(self.cell(7, 7), game.white_player)
+        elif number == 1:
+            self.width = 10
+            self.height = 10
+
+            self.screen_resized()
+
+            self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
+
+            for i in range(self.width):
+                self.cell(i, 1).figure = Pawn(self.cell(i, 1), game.black_player)
+                self.cell(i, 8).figure = Pawn(self.cell(i, 6), game.white_player)
+
+            self.cell(0, 0).figure = Rook(self.cell(0, 0), game.black_player)
+            self.cell(1, 0).figure = Knight(self.cell(1, 0), game.black_player)
+            self.cell(2, 0).figure = Camel(self.cell(2, 0), game.black_player)
+            self.cell(3, 0).figure = Bishop(self.cell(3, 0), game.black_player)
+            self.cell(4, 0).figure = Queen(self.cell(4, 0), game.black_player)
+            self.cell(5, 0).figure = King(self.cell(5, 0), game.black_player)
+            self.cell(6, 0).figure = Bishop(self.cell(6, 0), game.black_player)
+            self.cell(7, 0).figure = Camel(self.cell(7, 0), game.black_player)
+            self.cell(8, 0).figure = Knight(self.cell(8, 0), game.black_player)
+            self.cell(9, 0).figure = Rook(self.cell(9, 0), game.black_player)
+
+            self.cell(0, 9).figure = Rook(self.cell(0, 9), game.white_player)
+            self.cell(1, 9).figure = Knight(self.cell(1, 9), game.white_player)
+            self.cell(2, 9).figure = Camel(self.cell(2, 9), game.white_player)
+            self.cell(3, 9).figure = Bishop(self.cell(3, 9), game.white_player)
+            self.cell(4, 9).figure = Queen(self.cell(4, 9), game.white_player)
+            self.cell(5, 9).figure = King(self.cell(5, 9), game.white_player)
+            self.cell(6, 9).figure = Bishop(self.cell(6, 9), game.white_player)
+            self.cell(7, 9).figure = Camel(self.cell(7, 9), game.white_player)
+            self.cell(8, 9).figure = Knight(self.cell(8, 9), game.white_player)
+            self.cell(9, 9).figure = Rook(self.cell(9, 9), game.white_player)
 
     def draw(self):
         pygame.draw.rect(self.screen, self.color, [self.hor_margin - 2, self.vert_margin - 2, self.width * self.cell_width + 2 * 2, self.height * self.cell_height + 2 * 2], 2)
@@ -66,8 +102,8 @@ class Board:
                     )
                 )
 
-
     def cell(self, x, y):
+        # print(x, y)
         return self.data[y][x]
 
     def screen_resized(self):

@@ -11,8 +11,8 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 game.set_screen(screen)
 
-board = Board(screen, 8, 8, square_cells=True)
-board.use_default_position()
+board = Board(screen, 1, 1, square_cells=True)
+board.use_default_config(1)
 game.set_board(board)
 
 game.run()
@@ -40,15 +40,19 @@ while game.continue_game:
                     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
         elif evt.type == pygame.MOUSEMOTION:
+            curr_cell = board.cell_by_coords(evt.pos)
             if board.selected_cell is not None:
                 sel_cell = board.cell(*board.selected_cell)
+                if board.selected_cell is not None and curr_cell is not None and sel_cell.figure.can_move_to(curr_cell) or sel_cell is curr_cell:
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                else:
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
             else:
-                continue
-            curr_cell = board.cell_by_coords(evt.pos)
-            if board.selected_cell is not None and curr_cell is not None and sel_cell.figure.can_move_to(curr_cell) or sel_cell is curr_cell:
-                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            else:
-                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                if curr_cell is None or curr_cell.figure is None:
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                else:
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+
 
     screen.fill(BG)
     board.draw()
