@@ -26,3 +26,12 @@ class Figure:
             game.figure_eaten(cell.figure)
         cell.figure = self
         self.cell = cell
+
+    def __call__(self, **kw):
+        cell = kw.get('cell', self.cell)
+        if 'cell' in kw:
+            kw.pop('cell')
+        player_id = kw.get('player_id', self.player_id)
+        if 'player_id' in kw:
+            kw.pop('player_id')
+        return self.__class__(cell=cell, player_id=player_id, **kw)

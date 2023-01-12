@@ -23,3 +23,15 @@ class Pawn(Figure):
             if cell.figure is not None and delta_y == (-1 if (game.black_player == self.player_id) else 1) and cell.figure.player_id != self.player_id:
                 return True
         return False
+
+    def __call__(self, **kw):
+        cell = kw.get('cell', self.cell)
+        if 'cell' in kw:
+            kw.pop('cell')
+        player_id = kw.get('player_id', self.player_id)
+        if 'player_id' in kw:
+            kw.pop('player_id')
+        allow_big_step = kw.get('allow_big_step', self.allow_big_step)
+        if 'allow_big_step' in kw:
+            kw.pop('allow_big_step')
+        return self.__class__(cell=cell, player_id=player_id, allow_big_step=allow_big_step, **kw)

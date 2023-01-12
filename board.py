@@ -2,11 +2,130 @@ import pygame
 
 from cell import Cell
 from constants import Colors
-from figures import Queen, Bishop, Rook, Pawn, King, Knight, Camel
+from figures import Queen, Bishop, Rook, Pawn, King, Knight, Camel, GrassHopper
 from game import game
 
 
 class Board:
+    CONFIGS = {
+        'std': [
+            [
+                Rook(None, game.black_player),
+                Knight(None, game.black_player),
+                Bishop(None, game.black_player),
+                Queen(None, game.black_player),
+                King(None, game.black_player),
+                Bishop(None, game.black_player),
+                Knight(None, game.black_player),
+                Rook(None, game.black_player)
+            ],
+            [Pawn(None, game.black_player)] * 8,
+            [None] * 8,
+            [None] * 8,
+            [None] * 8,
+            [None] * 8,
+            [Pawn(None, game.white_player)] * 8,
+            [
+                Rook(None, game.white_player),
+                Knight(None, game.white_player),
+                Bishop(None, game.white_player),
+                Queen(None, game.white_player),
+                King(None, game.white_player),
+                Bishop(None, game.white_player),
+                Knight(None, game.white_player),
+                Rook(None, game.white_player)
+            ],
+        ],
+
+        '+camel': [
+            [
+                Rook(None, game.black_player),
+                Knight(None, game.black_player),
+                Camel(None, game.black_player),
+                Bishop(None, game.black_player),
+                Queen(None, game.black_player),
+                King(None, game.black_player),
+                Bishop(None, game.black_player),
+                Camel(None, game.black_player),
+                Knight(None, game.black_player),
+                Rook(None, game.black_player)
+            ],
+            [Pawn(None, game.black_player)] * 10,
+            [None] * 10,
+            [None] * 10,
+            [None] * 10,
+            [None] * 10,
+            [None] * 10,
+            [None] * 10,
+            [Pawn(None, game.white_player)] * 10,
+            [
+                Rook(None, game.white_player),
+                Knight(None, game.white_player),
+                Camel(None, game.white_player),
+                Bishop(None, game.white_player),
+                Queen(None, game.white_player),
+                King(None, game.white_player),
+                Bishop(None, game.white_player),
+                Camel(None, game.white_player),
+                Knight(None, game.white_player),
+                Rook(None, game.white_player)
+            ],
+        ],
+        '+camel+grasshopper': [
+            [
+                Rook(None, game.black_player),
+                Knight(None, game.black_player),
+                Camel(None, game.black_player),
+                Bishop(None, game.black_player),
+                GrassHopper(None, game.black_player),
+                Queen(None, game.black_player),
+                King(None, game.black_player),
+                GrassHopper(None, game.black_player),
+                Bishop(None, game.black_player),
+                Camel(None, game.black_player),
+                Knight(None, game.black_player),
+                Rook(None, game.black_player)
+            ],
+            [Pawn(None, game.black_player)] * 12,
+            [None] * 12,
+            [None] * 12,
+            [None] * 12,
+            [None] * 12,
+            [None] * 12,
+            [None] * 12,
+            [None] * 12,
+            [None] * 12,
+            [Pawn(None, game.white_player)] * 12,
+            [
+                Rook(None, game.white_player),
+                Knight(None, game.white_player),
+                Camel(None, game.white_player),
+                Bishop(None, game.white_player),
+                GrassHopper(None, game.white_player),
+                Queen(None, game.white_player),
+                King(None, game.white_player),
+                GrassHopper(None, game.white_player),
+                Bishop(None, game.white_player),
+                Camel(None, game.white_player),
+                Knight(None, game.white_player),
+                Rook(None, game.white_player)
+            ],
+        ],
+
+        'mini': [
+            [Rook(None, game.black_player), Bishop(None, game.black_player), King(None, game.black_player), Bishop(None, game.black_player), Rook(None, game.black_player)],
+            [Pawn(None, game.black_player)] * 5,
+            [None] * 5,
+            [None] * 5,
+            [None] * 5,
+            [None] * 5,
+            [Pawn(None, game.white_player)] * 5,
+            [Rook(None, game.white_player), Bishop(None, game.white_player), King(None, game.white_player),
+             Bishop(None, game.white_player), Rook(None, game.white_player)],
+        ]
+
+    }
+
     def __init__(self, screen, width, height, color=Colors.WHITE, square_cells=False):
         self.screen = screen
         self.width = width
@@ -20,74 +139,34 @@ class Board:
         self.cell_width = 0
         self.selected_cell = None
 
-        self.screen_resized()
+        self.data = []
 
-        self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
+        self.screen_resized(True)
 
-    def use_default_config(self, number=0):
-        if number == 0:
-            self.width = self.height = 8
-            self.screen_resized()
 
-            self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
+    def put_figure(self, figure):
+        figure.cell.figure = figure
 
-            for i in range(self.width):
-                self.cell(i, 1).figure = Pawn(self.cell(i, 1), game.black_player)
-                self.cell(i, 6).figure = Pawn(self.cell(i, 6), game.white_player)
+    def load_config(self, name):
+        if name not in Board.CONFIGS:
+            return Board.CONFIGS[name]
 
-            self.cell(0, 0).figure = Rook(self.cell(0, 0), game.black_player)
-            self.cell(1, 0).figure = Knight(self.cell(1, 0), game.black_player)
-            self.cell(2, 0).figure = Bishop(self.cell(2, 0), game.black_player)
-            self.cell(3, 0).figure = Queen(self.cell(3, 0), game.black_player)
-            self.cell(4, 0).figure = King(self.cell(4, 0), game.black_player)
-            self.cell(5, 0).figure = Bishop(self.cell(5, 0), game.black_player)
-            self.cell(6, 0).figure = Knight(self.cell(6, 0), game.black_player)
-            self.cell(7, 0).figure = Rook(self.cell(7, 0), game.black_player)
+        self.height = len(Board.CONFIGS[name])
+        if self.height > 0:
+            self.width = len(Board.CONFIGS[name][0])
+        else:
+            self.width = 0
+        self.screen_resized(True)
 
-            self.cell(0, 7).figure = Rook(self.cell(0, 7), game.white_player)
-            self.cell(1, 7).figure = Knight(self.cell(1, 7), game.white_player)
-            self.cell(2, 7).figure = Bishop(self.cell(2, 7), game.white_player)
-            self.cell(3, 7).figure = Queen(self.cell(3, 7), game.white_player)
-            self.cell(4, 7).figure = King(self.cell(4, 7), game.white_player)
-            self.cell(5, 7).figure = Bishop(self.cell(5, 7), game.white_player)
-            self.cell(6, 7).figure = Knight(self.cell(6, 7), game.white_player)
-            self.cell(7, 7).figure = Rook(self.cell(7, 7), game.white_player)
-        elif number == 1:
-            self.width = 10
-            self.height = 10
-
-            self.screen_resized()
-
-            self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
-
-            for i in range(self.width):
-                self.cell(i, 1).figure = Pawn(self.cell(i, 1), game.black_player)
-                self.cell(i, 8).figure = Pawn(self.cell(i, 8), game.white_player)
-
-            self.cell(0, 0).figure = Rook(self.cell(0, 0), game.black_player)
-            self.cell(1, 0).figure = Knight(self.cell(1, 0), game.black_player)
-            self.cell(2, 0).figure = Camel(self.cell(2, 0), game.black_player)
-            self.cell(3, 0).figure = Bishop(self.cell(3, 0), game.black_player)
-            self.cell(4, 0).figure = Queen(self.cell(4, 0), game.black_player)
-            self.cell(5, 0).figure = King(self.cell(5, 0), game.black_player)
-            self.cell(6, 0).figure = Bishop(self.cell(6, 0), game.black_player)
-            self.cell(7, 0).figure = Camel(self.cell(7, 0), game.black_player)
-            self.cell(8, 0).figure = Knight(self.cell(8, 0), game.black_player)
-            self.cell(9, 0).figure = Rook(self.cell(9, 0), game.black_player)
-
-            self.cell(0, 9).figure = Rook(self.cell(0, 9), game.white_player)
-            self.cell(1, 9).figure = Knight(self.cell(1, 9), game.white_player)
-            self.cell(2, 9).figure = Camel(self.cell(2, 9), game.white_player)
-            self.cell(3, 9).figure = Bishop(self.cell(3, 9), game.white_player)
-            self.cell(4, 9).figure = Queen(self.cell(4, 9), game.white_player)
-            self.cell(5, 9).figure = King(self.cell(5, 9), game.white_player)
-            self.cell(6, 9).figure = Bishop(self.cell(6, 9), game.white_player)
-            self.cell(7, 9).figure = Camel(self.cell(7, 9), game.white_player)
-            self.cell(8, 9).figure = Knight(self.cell(8, 9), game.white_player)
-            self.cell(9, 9).figure = Rook(self.cell(9, 9), game.white_player)
+        for r in range(len(Board.CONFIGS[name])):
+            for c in range(len(Board.CONFIGS[name][r])):
+                if Board.CONFIGS[name][r][c] is not None:
+                    self.put_figure(Board.CONFIGS[name][r][c](cell=self.cell(c, r)))
 
     def draw(self, mouse_pos):
-        pygame.draw.rect(self.screen, self.color, [self.hor_margin - 2, self.vert_margin - 2, self.width * self.cell_width + 2 * 2, self.height * self.cell_height + 2 * 2], 2)
+        pygame.draw.rect(self.screen, self.color,
+                         [self.hor_margin - 2, self.vert_margin - 2, self.width * self.cell_width + 2 * 2,
+                          self.height * self.cell_height + 2 * 2], 2)
 
         curr_cell = self.cell_by_coords(mouse_pos)
 
@@ -108,7 +187,7 @@ class Board:
         # print(x, y)
         return self.data[y][x]
 
-    def screen_resized(self):
+    def screen_resized(self, clear_data=False):
         screen_w = self.screen.get_width()
         screen_h = self.screen.get_height()
 
@@ -124,6 +203,9 @@ class Board:
         self.cell_width = (self.screen.get_width() - self.hor_margin * 2) // self.width
         self.cell_height = (self.screen.get_height() - self.vert_margin * 2) // self.height
 
+        if clear_data:
+            self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
+
     def cell_by_coords(self, coords):
         if (
                 coords[0] < self.hor_margin or
@@ -134,5 +216,6 @@ class Board:
             return None
         col = (coords[0] - self.hor_margin) // self.cell_width
         row = (coords[1] - self.vert_margin) // self.cell_height
+        if col >= self.width or row >= self.height:
+            return None
         return self.cell(col, row)
-

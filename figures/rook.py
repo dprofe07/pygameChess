@@ -34,7 +34,7 @@ class Rook(Figure):
                 if game.board.cell(x, y).figure is not None:
                     break
         elif y == cell.row:
-            while x < game.board.width:
+            while x < game.board.width - 1:
                 x += 1
                 if cell.col == x and cell.row == y:
                     return True
