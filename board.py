@@ -2,6 +2,8 @@ import pygame
 
 from cell import Cell
 from constants import Colors
+from figures import Queen, Bishop, Rook, Pawn
+from game import game
 
 
 class Board:
@@ -21,6 +23,32 @@ class Board:
         self.screen_resized()
 
         self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
+
+    def use_default_position(self, number=0):
+        if number == 0:
+            self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
+
+            for i in range(8):
+                self.cell(i, 1).figure = Pawn(self.cell(i, 1), game.black_player)
+                self.cell(i, 6).figure = Pawn(self.cell(i, 6), game.white_player)
+
+            self.cell(0, 0).figure = Rook(self.cell(0, 0), game.black_player)
+            self.cell(1, 0).figure = Bishop(self.cell(1, 0), game.black_player)
+            self.cell(2, 0).figure = Bishop(self.cell(2, 0), game.black_player)
+            self.cell(3, 0).figure = Queen(self.cell(3, 0), game.black_player)
+            self.cell(4, 0).figure = Queen(self.cell(4, 0), game.black_player)
+            self.cell(5, 0).figure = Bishop(self.cell(5, 0), game.black_player)
+            self.cell(6, 0).figure = Bishop(self.cell(6, 0), game.black_player)
+            self.cell(7, 0).figure = Rook(self.cell(7, 0), game.black_player)
+
+            self.cell(0, 7).figure = Rook(self.cell(0, 7), game.white_player)
+            self.cell(1, 7).figure = Bishop(self.cell(1, 7), game.white_player)
+            self.cell(2, 7).figure = Bishop(self.cell(2, 7), game.white_player)
+            self.cell(3, 7).figure = Queen(self.cell(3, 7), game.white_player)
+            self.cell(4, 7).figure = Queen(self.cell(4, 7), game.white_player)
+            self.cell(5, 7).figure = Bishop(self.cell(5, 7), game.white_player)
+            self.cell(6, 7).figure = Bishop(self.cell(6, 7), game.white_player)
+            self.cell(7, 7).figure = Rook(self.cell(7, 7), game.white_player)
 
     def draw(self):
         pygame.draw.rect(self.screen, self.color, [self.hor_margin - 2, self.vert_margin - 2, self.width * self.cell_width + 2 * 2, self.height * self.cell_height + 2 * 2], 2)
