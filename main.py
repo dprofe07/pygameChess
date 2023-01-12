@@ -17,6 +17,8 @@ game.set_board(board)
 
 game.run()
 
+btn_pressed = False
+
 while game.continue_game:
     for evt in pygame.event.get():
         if evt.type == pygame.QUIT:
@@ -38,25 +40,53 @@ while game.continue_game:
                         sel_cell.figure.move_to(clicked_cell)
                     board.selected_cell = None
                     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                btn_pressed = True
+
+        elif evt.type == pygame.MOUSEBUTTONUP:
+            if evt.button == pygame.BUTTON_LEFT:
+                btn_pressed = False
+                if game.hand_figure is not None:
+                    pos = pygame.mouse.get_pos()
+                    curr_cell = board.cell_by_coords(pos)
+
+
+                    if curr_cell is None or not game.hand_figure.can_move_to(curr_cell):
+                        sel_cell = board.cell(*board.selected_cell)
+                        sel_cell.figure = game.hand_figure
+                    else:
+                        game.hand_figure.move_to(curr_cell)
+                    game.hand_figure = None
+                    board.selected_cell = None
 
         elif evt.type == pygame.MOUSEMOTION:
-            curr_cell = board.cell_by_coords(evt.pos)
-            if board.selected_cell is not None:
-                sel_cell = board.cell(*board.selected_cell)
-                if board.selected_cell is not None and curr_cell is not None and sel_cell.figure.can_move_to(curr_cell) or sel_cell is curr_cell:
-                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-                else:
-                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+            if btn_pressed:
+                if board.selected_cell is not None and game.hand_figure is None:
+                    sel_cell = board.cell(*board.selected_cell)
+                    if sel_cell is not None:
+                        game.hand_figure = sel_cell.figure
+                        sel_cell.figure = None
             else:
-                if curr_cell is None or curr_cell.figure is None:
-                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                curr_cell = board.cell_by_coords(evt.pos)
+                if board.selected_cell is not None:
+                    sel_cell = board.cell(*board.selected_cell)
+                    if board.selected_cell is not None and curr_cell is not None and sel_cell.figure.can_move_to(curr_cell) or sel_cell is curr_cell:
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                    else:
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
                 else:
-                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                    if curr_cell is None or curr_cell.figure is None:
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                    else:
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 
 
     screen.fill(BG)
-    board.draw()
-
+    board.draw(pygame.mouse.get_pos())
+    if game.hand_figure is not None:
+        pos = pygame.mouse.get_pos()
+        fig = game.hand_figure.image
+        rect = fig.get_rect(center=pos)
+        screen.blit(fig, rect)
     pygame.display.flip()
 
     time.sleep(0.01)

@@ -13,12 +13,12 @@ class Rook(Figure):
         if (
                 (x != cell.col and y != cell.row) or
                 (cell is self.cell) or
-                not cell.available_for(self.cell.figure)
+                not cell.available_for(self)
         ):
             return False
 
         if x == cell.col:
-            while y < 7:
+            while y < game.board.height - 1:
                 y += 1
                 if cell.col == x and cell.row == y:
                     return True
@@ -34,7 +34,7 @@ class Rook(Figure):
                 if game.board.cell(x, y).figure is not None:
                     break
         elif y == cell.row:
-            while x < 7:
+            while x < game.board.width:
                 x += 1
                 if cell.col == x and cell.row == y:
                     return True

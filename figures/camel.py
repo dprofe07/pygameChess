@@ -7,7 +7,7 @@ class Camel(Figure):
         super().__init__(cell, 'Верблюд', f'pics\\camel_{game.get_color(player_id)}.png', player_id)
 
     def can_move_to(self, cell):
-        if (cell is self.cell) or not cell.available_for(self.cell.figure):
+        if (cell is self.cell) or not cell.available_for(self):
             return False
 
         delta_x = abs(cell.col - self.cell.col)

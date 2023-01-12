@@ -5,6 +5,7 @@ class Game:
 
         self.board = None
         self.continue_game = False
+        self.hand_figure = None
 
         self.screen = None
 

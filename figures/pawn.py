@@ -8,6 +8,9 @@ class Pawn(Figure):
         self.allow_big_step = allow_big_step
 
     def can_move_to(self, cell):
+        if (self.cell is cell) or (not cell.available_for(self)):
+            return False
+
         delta_x = self.cell.col - cell.col
         delta_y = self.cell.row - cell.row
         if delta_x == 0:

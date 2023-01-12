@@ -7,7 +7,7 @@ class King(Figure):
         super(King, self).__init__(cell, 'Король', f'pics\\king_{game.get_color(player_id)}.png', player_id)
 
     def can_move_to(self, cell):
-        if (cell is self.cell) or not cell.available_for(self.cell.figure):
+        if (cell is self.cell) or not cell.available_for(self):
             return False
 
         delta_x = abs(cell.col - self.cell.col)

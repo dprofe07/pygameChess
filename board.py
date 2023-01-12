@@ -62,7 +62,7 @@ class Board:
 
             for i in range(self.width):
                 self.cell(i, 1).figure = Pawn(self.cell(i, 1), game.black_player)
-                self.cell(i, 8).figure = Pawn(self.cell(i, 6), game.white_player)
+                self.cell(i, 8).figure = Pawn(self.cell(i, 8), game.white_player)
 
             self.cell(0, 0).figure = Rook(self.cell(0, 0), game.black_player)
             self.cell(1, 0).figure = Knight(self.cell(1, 0), game.black_player)
@@ -86,12 +86,14 @@ class Board:
             self.cell(8, 9).figure = Knight(self.cell(8, 9), game.white_player)
             self.cell(9, 9).figure = Rook(self.cell(9, 9), game.white_player)
 
-    def draw(self):
+    def draw(self, mouse_pos):
         pygame.draw.rect(self.screen, self.color, [self.hor_margin - 2, self.vert_margin - 2, self.width * self.cell_width + 2 * 2, self.height * self.cell_height + 2 * 2], 2)
+
+        curr_cell = self.cell_by_coords(mouse_pos)
 
         for y in range(self.height):
             for x in range(self.width):
-                img = self.cell(x, y).get_image()
+                img = self.cell(x, y).get_image(curr_cell)
 
                 self.screen.blit(
                     img, img.get_rect(

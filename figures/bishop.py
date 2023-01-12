@@ -13,12 +13,12 @@ class Bishop(Figure):
         if (
                 (x - cell.col != y - cell.row and cell.col - x != y - cell.row) or
                 (cell is self.cell) or
-                not cell.available_for(self.cell.figure)
+                not cell.available_for(self)
         ):
             return False
 
         if x - cell.col == y - cell.row:
-            while x < 7 and y < 7:
+            while x < game.board.width - 1 and y < game.board.height - 1:
                 x += 1
                 y += 1
                 if cell.col == x and cell.row == y:
@@ -40,7 +40,7 @@ class Bishop(Figure):
             x = self.cell.col
             y = self.cell.row
 
-            while x < 7 and y > 0:
+            while x < game.board.width - 1 and y > 0:
                 x += 1
                 y -= 1
                 if cell.col == x and cell.row == y:
@@ -51,7 +51,7 @@ class Bishop(Figure):
             x = self.cell.col
             y = self.cell.row
 
-            while x > 0 and y < 7:
+            while x > 0 and y < game.board.height - 1:
                 x -= 1
                 y += 1
                 if cell.col == x and cell.row == y:
