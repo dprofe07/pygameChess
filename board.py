@@ -2,7 +2,7 @@ import pygame
 
 from cell import Cell
 from constants import Colors
-from figures import Queen, Bishop, Rook, Pawn
+from figures import Queen, Bishop, Rook, Pawn, King
 from game import game
 
 
@@ -36,7 +36,7 @@ class Board:
             self.cell(1, 0).figure = Bishop(self.cell(1, 0), game.black_player)
             self.cell(2, 0).figure = Bishop(self.cell(2, 0), game.black_player)
             self.cell(3, 0).figure = Queen(self.cell(3, 0), game.black_player)
-            self.cell(4, 0).figure = Queen(self.cell(4, 0), game.black_player)
+            self.cell(4, 0).figure = King(self.cell(4, 0), game.black_player)
             self.cell(5, 0).figure = Bishop(self.cell(5, 0), game.black_player)
             self.cell(6, 0).figure = Bishop(self.cell(6, 0), game.black_player)
             self.cell(7, 0).figure = Rook(self.cell(7, 0), game.black_player)
@@ -45,7 +45,7 @@ class Board:
             self.cell(1, 7).figure = Bishop(self.cell(1, 7), game.white_player)
             self.cell(2, 7).figure = Bishop(self.cell(2, 7), game.white_player)
             self.cell(3, 7).figure = Queen(self.cell(3, 7), game.white_player)
-            self.cell(4, 7).figure = Queen(self.cell(4, 7), game.white_player)
+            self.cell(4, 7).figure = King(self.cell(4, 7), game.white_player)
             self.cell(5, 7).figure = Bishop(self.cell(5, 7), game.white_player)
             self.cell(6, 7).figure = Bishop(self.cell(6, 7), game.white_player)
             self.cell(7, 7).figure = Rook(self.cell(7, 7), game.white_player)
