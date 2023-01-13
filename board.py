@@ -194,14 +194,17 @@ class Board:
         self.vert_margin = 30
         self.hor_margin = 30
 
-        if self.square_cells and screen_h != screen_w:
-            if screen_w > screen_h:
-                self.hor_margin += (screen_w - screen_h) // 2
-            else:
-                self.vert_margin += (screen_h - screen_w) // 2
 
         self.cell_width = (self.screen.get_width() - self.hor_margin * 2) // self.width
         self.cell_height = (self.screen.get_height() - self.vert_margin * 2) // self.height
+
+        if self.square_cells:
+            if self.cell_width > self.cell_height:
+                self.cell_width = self.cell_height
+                self.hor_margin = (screen_w - self.cell_width * self.width) // 2
+            else:
+                self.cell_height = self.cell_width
+                self.vert_margin = (screen_h - self.cell_height * self.height) // 2
 
         if clear_data:
             self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
