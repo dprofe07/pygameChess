@@ -3,7 +3,7 @@ import os
 
 PORT = 9764
 if os.path.exists('/SERVER/is_server'):
-    SERVER = '127.0.0.1'
+    SERVER = '0.0.0.0'
 else:
     SERVER = '91.204.57.48'
 META_FIELD = 'META'
