@@ -26,18 +26,34 @@ class Game:
             self.client.send({
                 'name': f'CHESS_{n}'
             }, T.CREATE_ROOM)
+            data = self.client.recv()
+            if T.REJECT(data):
+                raise Exception('Troubles')
+            self.client.send({
+                'name': f'CHESS_{n}'
+            }, T.JOIN_ROOM)
         else:
             self.client.send({
                 f'name': f'CHESS_{n - 1}'
             }, T.JOIN_ROOM)
             self.board_locked = True
         self.client.start_loop(self.loop)
-
         self.screen = None
 
     def loop(self):
         msg = self.client.recv()
         if T.MOVE(msg):
+            from_ = msg['from']
+            to = msg['to']
+            cell_from = self.board.cell(*from_)
+            cell_to = self.board.cell(*to)
+            if cell_from.figure is None:
+                print(f'Troubles with cell {cell_from}')
+                return
+            if cell_to is None:
+                print(f'Troubles with cell {cell_to}')
+                return
+            cell_from.figure.move_to(cell_to)
             self.board_locked = False
 
     def set_board(self, board):
@@ -73,8 +89,8 @@ class Game:
     def record_move(self, from_, to):
         self.board_locked = True
         self.client.send({
-            'from': (from_.col, from_.row),
-            'to': (to.col, to.row),
+            'from': (self.board.width - 1 - from_.col, self.board.width - 1 - from_.row),
+            'to': (self.board.height - 1 - to.col, self.board.height - 1 - to.row),
         }, T.MOVE)
         print(f'MOVE: {from_} -> {to}')
 

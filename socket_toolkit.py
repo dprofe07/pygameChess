@@ -1,8 +1,11 @@
 import json
-import socket
+import os
 
-PORT = 5050
-SERVER = socket.gethostbyname(socket.gethostname())
+PORT = 9764
+if os.path.exists('/SERVER/is_server'):
+    SERVER = '127.0.0.1'
+else:
+    SERVER = '91.204.57.48'
 META_FIELD = 'META'
 UDATA_FIELD = 'UDATA'
 HEADER = 64

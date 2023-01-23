@@ -58,12 +58,14 @@ class Room:
     def get_all_addr(self):
         return list(self.clients.keys())
 
-    def broadcast(self, data, exclude=[]):
+    def broadcast(self, data, exclude=()):
         for client in self.clients.values():
             if client.idx in exclude:
+                print('EXCLUDING!')
                 continue
             try:
                 h_send(client.recver, data)
+                print('SENDING!')
             except Exception as ex:
                 print(f'There is an error in room {self.name}: {ex}')
                 self.clear()
@@ -76,7 +78,7 @@ class Room:
     def handle(self, client, data):
         if client.idx not in self.clients:
             return False
-        self.broadcast(data)
+        self.broadcast(data, [client.idx])
         return True
 
 
@@ -123,7 +125,6 @@ class Server:
 
     def _start_serv_func(self, tag, data):
         tag = str(tag)
-        print(tag, self.serv_funcs)
         if tag not in self.serv_funcs:
             return None
         func = self.serv_funcs[tag]
@@ -137,7 +138,6 @@ class Server:
         success = 0
         for meta_tag in data[META_FIELD]:
             cb = self._start_serv_func(meta_tag, data)
-            print(meta_tag, cb)
             if cb is None:
                 continue
             h_send(client.recver, cb)
