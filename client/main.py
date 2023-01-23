@@ -30,8 +30,9 @@ while game.continue_game:
                 if evt.button == pygame.BUTTON_LEFT:
                     clicked_cell = board.cell_by_coords(evt.pos)
                     if board.selected_cell is None or clicked_cell is None:
-                        if clicked_cell is None or clicked_cell.figure is None:
+                        if clicked_cell is None or clicked_cell.figure is None or clicked_cell.figure.player is not game.current_player:
                             board.selected_cell = None
+                            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
                         else:
                             board.selected_cell = clicked_cell.col, clicked_cell.row
                             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
