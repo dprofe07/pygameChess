@@ -1,4 +1,4 @@
-from player import Player
+from client.player import Player
 from client.socket_client import SocketClient
 from socket_toolkit import T, add_meta, PORT
 
@@ -79,4 +79,4 @@ class Game:
         print(f'MOVE: {from_} -> {to}')
 
 
-game = Game('whit')
+# game = Game('whit')
