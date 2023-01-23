@@ -42,8 +42,9 @@ class Figure:
         cell.figure = f
         return res
 
-    def move_to(self, cell):
-        self.game.record_move(self.cell, cell)
+    def move_to(self, cell, need_to_notify_server=True):
+        if need_to_notify_server:
+            self.game.record_move(self.cell, cell)
         self.cell.figure = None
         if cell.figure is not None:
             game.figure_eaten(cell.figure)

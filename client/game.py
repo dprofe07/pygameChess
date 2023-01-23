@@ -53,7 +53,7 @@ class Game:
             if cell_to is None:
                 print(f'Troubles with cell {cell_to}')
                 return
-            cell_from.figure.move_to(cell_to)
+            cell_from.figure.move_to(cell_to, False)
             self.board_locked = False
 
     def set_board(self, board):
