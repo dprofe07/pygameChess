@@ -3,135 +3,140 @@ import pygame
 from cell import Cell
 from constants import Colors
 from figures import Queen, Bishop, Rook, Pawn, King, Knight, Camel, GrassHopper
-from game import game
 
 
 class Board:
-    CONFIGS = {
-        'std': [
-            [
-                Rook(None, game.black_player),
-                Knight(None, game.black_player),
-                Bishop(None, game.black_player),
-                Queen(None, game.black_player),
-                King(None, game.black_player),
-                Bishop(None, game.black_player),
-                Knight(None, game.black_player),
-                Rook(None, game.black_player)
+    def __init__(self, game, screen, width, height, color=Colors.WHITE, square_cells=False, reversed_board=False):
+        self.reversed_board = reversed_board
+        self.configs = {
+            'std': [
+                [
+                    Rook(None, game.black_player),
+                    Knight(None, game.black_player),
+                    Bishop(None, game.black_player),
+                    Queen(None, game.black_player),
+                    King(None, game.black_player),
+                    Bishop(None, game.black_player),
+                    Knight(None, game.black_player),
+                    Rook(None, game.black_player)
+                ],
+                [Pawn(None, game.black_player)] * 8,
+                [None] * 8,
+                [None] * 8,
+                [None] * 8,
+                [None] * 8,
+                [Pawn(None, game.white_player)] * 8,
+                [
+                    Rook(None, game.white_player),
+                    Knight(None, game.white_player),
+                    Bishop(None, game.white_player),
+                    Queen(None, game.white_player),
+                    King(None, game.white_player),
+                    Bishop(None, game.white_player),
+                    Knight(None, game.white_player),
+                    Rook(None, game.white_player)
+                ],
             ],
-            [Pawn(None, game.black_player)] * 8,
-            [None] * 8,
-            [None] * 8,
-            [None] * 8,
-            [None] * 8,
-            [Pawn(None, game.white_player)] * 8,
-            [
-                Rook(None, game.white_player),
-                Knight(None, game.white_player),
-                Bishop(None, game.white_player),
-                Queen(None, game.white_player),
-                King(None, game.white_player),
-                Bishop(None, game.white_player),
-                Knight(None, game.white_player),
-                Rook(None, game.white_player)
-            ],
-        ],
 
-        '+camel': [
-            [
-                Rook(None, game.black_player),
-                Knight(None, game.black_player),
-                Camel(None, game.black_player),
-                Bishop(None, game.black_player),
-                Queen(None, game.black_player),
-                King(None, game.black_player),
-                Bishop(None, game.black_player),
-                Camel(None, game.black_player),
-                Knight(None, game.black_player),
-                Rook(None, game.black_player)
+            '+camel': [
+                [
+                    Rook(None, game.black_player),
+                    Knight(None, game.black_player),
+                    Camel(None, game.black_player),
+                    Bishop(None, game.black_player),
+                    Queen(None, game.black_player),
+                    King(None, game.black_player),
+                    Bishop(None, game.black_player),
+                    Camel(None, game.black_player),
+                    Knight(None, game.black_player),
+                    Rook(None, game.black_player)
+                ],
+                [Pawn(None, game.black_player)] * 10,
+                [None] * 10,
+                [None] * 10,
+                [None] * 10,
+                [None] * 10,
+                [None] * 10,
+                [None] * 10,
+                [Pawn(None, game.white_player)] * 10,
+                [
+                    Rook(None, game.white_player),
+                    Knight(None, game.white_player),
+                    Camel(None, game.white_player),
+                    Bishop(None, game.white_player),
+                    Queen(None, game.white_player),
+                    King(None, game.white_player),
+                    Bishop(None, game.white_player),
+                    Camel(None, game.white_player),
+                    Knight(None, game.white_player),
+                    Rook(None, game.white_player)
+                ],
             ],
-            [Pawn(None, game.black_player)] * 10,
-            [None] * 10,
-            [None] * 10,
-            [None] * 10,
-            [None] * 10,
-            [None] * 10,
-            [None] * 10,
-            [Pawn(None, game.white_player)] * 10,
-            [
-                Rook(None, game.white_player),
-                Knight(None, game.white_player),
-                Camel(None, game.white_player),
-                Bishop(None, game.white_player),
-                Queen(None, game.white_player),
-                King(None, game.white_player),
-                Bishop(None, game.white_player),
-                Camel(None, game.white_player),
-                Knight(None, game.white_player),
-                Rook(None, game.white_player)
+            '+camel+grasshopper': [
+                [
+                    Rook(None, game.black_player),
+                    Knight(None, game.black_player),
+                    Camel(None, game.black_player),
+                    Bishop(None, game.black_player),
+                    GrassHopper(None, game.black_player),
+                    Queen(None, game.black_player),
+                    King(None, game.black_player),
+                    GrassHopper(None, game.black_player),
+                    Bishop(None, game.black_player),
+                    Camel(None, game.black_player),
+                    Knight(None, game.black_player),
+                    Rook(None, game.black_player)
+                ],
+                [Pawn(None, game.black_player)] * 12,
+                [None] * 12,
+                [None] * 12,
+                [None] * 12,
+                [None] * 12,
+                [Pawn(None, game.white_player)] * 12,
+                [
+                    Rook(None, game.white_player),
+                    Knight(None, game.white_player),
+                    Camel(None, game.white_player),
+                    Bishop(None, game.white_player),
+                    GrassHopper(None, game.white_player),
+                    Queen(None, game.white_player),
+                    King(None, game.white_player),
+                    GrassHopper(None, game.white_player),
+                    Bishop(None, game.white_player),
+                    Camel(None, game.white_player),
+                    Knight(None, game.white_player),
+                    Rook(None, game.white_player)
+                ],
             ],
-        ],
-        '+camel+grasshopper': [
-            [
-                Rook(None, game.black_player),
-                Knight(None, game.black_player),
-                Camel(None, game.black_player),
-                Bishop(None, game.black_player),
-                GrassHopper(None, game.black_player),
-                Queen(None, game.black_player),
-                King(None, game.black_player),
-                GrassHopper(None, game.black_player),
-                Bishop(None, game.black_player),
-                Camel(None, game.black_player),
-                Knight(None, game.black_player),
-                Rook(None, game.black_player)
-            ],
-            [Pawn(None, game.black_player)] * 12,
-            [None] * 12,
-            [None] * 12,
-            [None] * 12,
-            [None] * 12,
-            [None] * 12,
-            [None] * 12,
-            [None] * 12,
-            [None] * 12,
-            [Pawn(None, game.white_player)] * 12,
-            [
-                Rook(None, game.white_player),
-                Knight(None, game.white_player),
-                Camel(None, game.white_player),
-                Bishop(None, game.white_player),
-                GrassHopper(None, game.white_player),
-                Queen(None, game.white_player),
-                King(None, game.white_player),
-                GrassHopper(None, game.white_player),
-                Bishop(None, game.white_player),
-                Camel(None, game.white_player),
-                Knight(None, game.white_player),
-                Rook(None, game.white_player)
-            ],
-        ],
 
-        'mini': [
-            [Rook(None, game.black_player), Bishop(None, game.black_player), King(None, game.black_player), Bishop(None, game.black_player), Rook(None, game.black_player)],
-            [Pawn(None, game.black_player)] * 5,
-            [None] * 5,
-            [None] * 5,
-            [None] * 5,
-            [None] * 5,
-            [Pawn(None, game.white_player)] * 5,
-            [Rook(None, game.white_player), Bishop(None, game.white_player), King(None, game.white_player),
-             Bishop(None, game.white_player), Rook(None, game.white_player)],
-        ]
+            'mini': [
+                [Rook(None, game.black_player), Bishop(None, game.black_player), King(None, game.black_player),
+                 Bishop(None, game.black_player), Rook(None, game.black_player)],
+                [Pawn(None, game.black_player)] * 5,
+                [None] * 5,
+                [None] * 5,
+                [None] * 5,
+                [None] * 5,
+                [Pawn(None, game.white_player)] * 5,
+                [Rook(None, game.white_player), Bishop(None, game.white_player), King(None, game.white_player),
+                 Bishop(None, game.white_player), Rook(None, game.white_player)],
+            ],
+            'test': [
+                [None, None, None, None, Pawn(None, game.black_player)],
+                [None] * 5,
+                [None, None, King(None, game.white_player), None, None],
+                [None] * 5,
+                [None] * 5,
+            ]
 
-    }
+        }
 
-    def __init__(self, screen, width, height, color=Colors.WHITE, square_cells=False):
         self.screen = screen
         self.width = width
         self.height = height
         self.color = color
         self.square_cells = square_cells
+        self.game = game
 
         self.vert_margin = 0
         self.hor_margin = 0
@@ -143,36 +148,47 @@ class Board:
 
         self.screen_resized(True)
 
-
     def put_figure(self, figure):
         figure.cell.figure = figure
 
     def load_config(self, name):
-        if name not in Board.CONFIGS:
-            return Board.CONFIGS[name]
+        if name not in self.configs:
+            return self.configs[name]
 
-        self.height = len(Board.CONFIGS[name])
+        self.height = len(self.configs[name])
         if self.height > 0:
-            self.width = len(Board.CONFIGS[name][0])
+            self.width = len(self.configs[name][0])
         else:
             self.width = 0
+
         self.screen_resized(True)
 
-        for r in range(len(Board.CONFIGS[name])):
-            for c in range(len(Board.CONFIGS[name][r])):
-                if Board.CONFIGS[name][r][c] is not None:
-                    self.put_figure(Board.CONFIGS[name][r][c](cell=self.cell(c, r)))
+        if not self.reversed_board:
+            for r in range(len(self.configs[name])):
+                for c in range(len(self.configs[name][r])):
+                    if self.configs[name][r][c] is not None:
+                        self.put_figure(self.configs[name][r][c](cell=self.cell(c, r)))
+        else:
+            for r in range(self.height):
+                for c in range(self.width):
+                    if self.configs[name][r][c] is not None:
+                        self.put_figure(self.configs[name][r][c](cell=self.cell(self.width - c - 1, self.height - r - 1)))
 
     def draw(self, mouse_pos):
-        pygame.draw.rect(self.screen, self.color,
-                         [self.hor_margin - 2, self.vert_margin - 2, self.width * self.cell_width + 2 * 2,
-                          self.height * self.cell_height + 2 * 2], 2)
+        pygame.draw.rect(
+            self.screen, self.color,
+            [
+                self.hor_margin - 2, self.vert_margin - 2,
+                self.width * self.cell_width + 2 * 2, self.height * self.cell_height + 2 * 2
+            ],
+            2
+        )
 
         curr_cell = self.cell_by_coords(mouse_pos)
 
         for y in range(self.height):
             for x in range(self.width):
-                img = self.cell(x, y).get_image(curr_cell)
+                img = self.cell(x, y).get_image(curr_cell, self.reversed_board)
 
                 self.screen.blit(
                     img, img.get_rect(
@@ -193,7 +209,6 @@ class Board:
 
         self.vert_margin = 30
         self.hor_margin = 30
-
 
         self.cell_width = (self.screen.get_width() - self.hor_margin * 2) // self.width
         self.cell_height = (self.screen.get_height() - self.vert_margin * 2) // self.height

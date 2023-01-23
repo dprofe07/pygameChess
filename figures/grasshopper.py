@@ -1,13 +1,12 @@
 from figures.figure import Figure
-from game import game
 
 
 class GrassHopper(Figure):
-    def __init__(self, cell, player_id):
-        super().__init__(cell, 'Кузнечик', f'pics\\grasshopper_{game.get_color(player_id)}.png', player_id)
+    def __init__(self, cell, player):
+        super().__init__(cell, 'Кузнечик', player.get_image_name('grasshopper'), player)
 
-    def can_move_to(self, cell):
-        if (cell is self.cell) or not cell.available_for(self):
+    def can_move_to(self, cell, check_other_figures=True):
+        if (cell is self.cell) or not cell.available_for(self, check_other_figures):
             return False
 
         delta_x = abs(cell.col - self.cell.col)

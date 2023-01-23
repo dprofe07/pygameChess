@@ -1,13 +1,12 @@
 from figures.figure import Figure
-from game import game
 
 
 class King(Figure):
-    def __init__(self, cell, player_id):
-        super(King, self).__init__(cell, 'Король', f'pics\\king_{game.get_color(player_id)}.png', player_id)
+    def __init__(self, cell, player):
+        super(King, self).__init__(cell, 'Король', player.get_image_name('king'), player, False, True)
 
-    def can_move_to(self, cell):
-        if (cell is self.cell) or not cell.available_for(self):
+    def can_move_to(self, cell, check_other_figures=True):
+        if not cell.available_for(self, check_other_figures):
             return False
 
         delta_x = abs(cell.col - self.cell.col)

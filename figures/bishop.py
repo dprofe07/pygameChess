@@ -1,19 +1,19 @@
 from figures.figure import Figure
-from game import game
+from client.game import game
 
 
 class Bishop(Figure):
-    def __init__(self, cell, player_id):
-        super().__init__(cell, 'Слон', f'pics\\bishop_{game.get_color(player_id)}.png', player_id)
+    def __init__(self, cell, player):
+        super().__init__(cell, 'Слон', player.get_image_name('bishop'), player)
 
-    def can_move_to(self, cell):
+    def can_move_to(self, cell, check_other_figures=True):
         x = self.cell.col
         y = self.cell.row
 
         if (
                 (x - cell.col != y - cell.row and cell.col - x != y - cell.row) or
                 (cell is self.cell) or
-                not cell.available_for(self)
+                not cell.available_for(self, check_other_figures)
         ):
             return False
 

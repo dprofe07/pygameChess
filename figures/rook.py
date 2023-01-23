@@ -1,20 +1,16 @@
 from figures.figure import Figure
-from game import game
+from client.game import game
 
 
 class Rook(Figure):
-    def __init__(self, cell, player_id):
-        super().__init__(cell, 'Ладья', f'pics\\rook_{game.get_color(player_id)}.png', player_id)
+    def __init__(self, cell, player):
+        super().__init__(cell, 'Ладья', player.get_image_name('rook'), player)
 
-    def can_move_to(self, cell):
+    def can_move_to(self, cell, check_other_figures=True):
         x = self.cell.col
         y = self.cell.row
 
-        if (
-                (x != cell.col and y != cell.row) or
-                (cell is self.cell) or
-                not cell.available_for(self)
-        ):
+        if not cell.available_for(self, check_other_figures):
             return False
 
         if x == cell.col:
