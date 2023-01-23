@@ -6,8 +6,8 @@ from figures import Queen, Bishop, Rook, Pawn, King, Knight, Camel, GrassHopper
 
 
 class Board:
-    def __init__(self, game, screen, width, height, color=Colors.WHITE, square_cells=False, reversed_board=False):
-        self.reversed_board = reversed_board
+    def __init__(self, game, screen, width, height, color=Colors.WHITE, square_cells=False):
+        self.reversed_board = game.reversed_board
         self.configs = {
             'std': [
                 [

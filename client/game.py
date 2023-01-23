@@ -4,17 +4,31 @@ from socket_toolkit import T, add_meta, PORT
 
 
 class Game:
-    def __init__(self, client):
+    def __init__(self, player):
         self.black_player = Player(1, 'black', [])
         self.white_player = Player(2, 'white', [self.black_player])
         self.black_player.other_players = [self.white_player]
+
+        self.current_player = self.white_player if player == 'white' else self.black_player
 
         self.board = None
         self.continue_ = False
         self.hand_figure = None
         self.board_locked = False
+        self.reversed_board = self.current_player is self.black_player
 
-        self.client = client
+        self.client = SocketClient('127.0.0.1', PORT)
+        lst = [int(i.replace('CHESS_', '')) for i in self.client.get_room_list()['rooms']]
+        n = lst[-1] + 1
+        if self.current_player is self.white_player:
+            self.client.send({
+                'name': f'CHESS_{n}'
+            }, T.CREATE_ROOM)
+        else:
+            self.client.send({
+                f'name': f'CHESS_{n - 1}'
+            }, T.JOIN_ROOM)
+            self.board_locked = True
         self.client.start_loop(self.loop)
 
         self.screen = None
@@ -44,6 +58,7 @@ class Game:
         self.screen = screen
 
     def stop(self):
+        self.client.close()
         self.continue_ = False
 
     @property
@@ -55,11 +70,11 @@ class Game:
 
     def record_move(self, from_, to):
         self.board_locked = True
-        self.client.send(add_meta({
+        self.client.send({
             'from': (from_.col, from_.row),
             'to': (to.col, to.row),
-        }, T.MOVE))
+        }, T.MOVE)
         print(f'MOVE: {from_} -> {to}')
 
 
-game = Game(SocketClient('127.0.0.1', PORT))
+game = Game('black')
