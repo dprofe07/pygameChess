@@ -1,6 +1,6 @@
 from client.player import Player
 from client.socket_client import SocketClient
-from socket_toolkit import T, add_meta, PORT
+from socket_toolkit import T, add_meta, PORT, SERVER
 
 
 class Game:
@@ -17,7 +17,7 @@ class Game:
         self.board_locked = False
         self.reversed_board = self.current_player is self.black_player
 
-        self.client = SocketClient('127.0.0.1', PORT)
+        self.client = SocketClient(SERVER, PORT)
         lst = [int(i.replace('CHESS_', '')) for i in self.client.get_room_list()['rooms']]
         if len(lst) == 0:
             lst = [1]
