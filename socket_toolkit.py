@@ -74,8 +74,10 @@ def h_recv(conn, sub=None):
     data = conn.recv(msg_len)
     data = data_from_bytes(data)
     strat_stop(conn)
+    print(f'GOT: {data}')
     if sub is not None:
         return data[sub]
+
     return data
 
 

@@ -19,6 +19,8 @@ class Game:
 
         self.client = SocketClient('127.0.0.1', PORT)
         lst = [int(i.replace('CHESS_', '')) for i in self.client.get_room_list()['rooms']]
+        if len(lst) == 0:
+            lst = [1]
         n = lst[-1] + 1
         if self.current_player is self.white_player:
             self.client.send({
@@ -77,4 +79,4 @@ class Game:
         print(f'MOVE: {from_} -> {to}')
 
 
-game = Game('black')
+game = Game('whit')
