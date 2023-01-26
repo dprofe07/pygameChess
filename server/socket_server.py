@@ -64,8 +64,8 @@ class Room:
                 print('EXCLUDING!')
                 continue
             try:
-                h_send(client.recver, data)
                 print('SENDING!')
+                h_send(client.recver, data)
             except Exception as ex:
                 print(f'There is an error in room {self.name}: {ex}')
                 self.clear()
@@ -171,6 +171,9 @@ class Server:
             msg = h_recv(conn)
             if T.DISCONNECT(msg):
                 client.close()
+                cl_room = self.rooms[client.room_name]
+                if cl_room.people_count() == 1:
+                    self._destroy_room(client.room_name)
                 return
             callback = self._check_for_meta(client, msg)
             if callback or client.room_name is None:

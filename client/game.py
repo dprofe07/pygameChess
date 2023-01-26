@@ -3,6 +3,8 @@ import pygame
 from client.player import Player
 from client.socket_client import SocketClient
 from pyautogui import prompt, confirm
+
+from constants import BG
 from socket_toolkit import T, add_meta, PORT, SERVER, meta
 
 
@@ -19,6 +21,7 @@ class Game:
         self.hand_figure = None
         self.left_btn_pressed = False
         self.board_locked = False
+        self.connected = False
         self.reversed_board = self.current_player is self.black_player
 
         self.client = SocketClient(SERVER, PORT)
@@ -26,6 +29,8 @@ class Game:
         create_room = confirm('Подключение к шахматам', 'Подключение', ['Создать игру', 'Присоединиться к игре']) == 'Создать игру'
 
         room_name = prompt('Введите имя комнаты', 'Подключение', None)
+        if room_name is None:
+            exit(0)
 
         if create_room:
             self.client.send({
@@ -38,13 +43,16 @@ class Game:
         self.client.send({
             f'name': room_name,
         }, T.JOIN_ROOM)
+        self.client.recv()
 
         if not create_room:
-            self.client.send(meta(T.CAN_START))
+            self.client.send({}, T.CAN_START)
+            self.connected = True
 
         self.board_locked = True
         self.client.start_loop(self.loop)
         self.screen = None
+        self.need_redraw = True
 
     def loop(self):
         msg = self.client.recv()
@@ -61,12 +69,15 @@ class Game:
                 return
             cell_from.figure.move_to(cell_to, False)
             self.board_locked = False
-
-        elif T.CAN_START(msg):
+            self.need_redraw = True
+        elif T.CAN_START(msg) and not self.connected:
+            self.connected = True
             if self.current_player is self.black_player:
                 self.client.send({}, T.CAN_START)
             else:
                 self.board_locked = False
+
+            self.need_redraw = True
 
     def set_board(self, board):
         self.board = board
@@ -91,6 +102,15 @@ class Game:
         self.client.close()
         self.continue_ = False
 
+    def get_status_text(self):
+        if not self.connected:
+            return 'Ждём подключения оппонента'
+        else:
+            if self.board_locked:
+                return 'Ход соперника'
+            else:
+                return 'Ваш ход'
+
     @property
     def continue_game(self):
         return self.continue_
@@ -112,6 +132,7 @@ class Game:
             self.stop()
         elif event.type == pygame.WINDOWRESIZED:
             self.board.screen_resized()
+            self.need_redraw = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if self.board_locked:
                 self.left_btn_pressed = False
@@ -141,6 +162,7 @@ class Game:
                     else:
                         self.board.select_cell(clicked_cell.coords())
                         self.set_pointer_cursor()
+                self.need_redraw = True
 
         elif event.type == pygame.MOUSEBUTTONUP:
             if self.board_locked:
@@ -159,11 +181,13 @@ class Game:
                         self.hand_figure.move_to(curr_cell)
                     self.hand_figure = None
                     self.board.select_cell(None)
+                    self.need_redraw = True
 
         elif event.type == pygame.MOUSEMOTION:
             if self.board_locked:
                 self.set_standart_cursor()
                 return
+            self.need_redraw = True
 
             if self.left_btn_pressed:
                 if self.board.selected_cell is not None and self.hand_figure is None:
@@ -190,5 +214,21 @@ class Game:
     @staticmethod
     def set_standart_cursor():
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+    def draw(self):
+        if not self.need_redraw:
+            return
+
+        self.screen.fill(BG)
+        self.board.draw(pygame.mouse.get_pos(), self.get_status_text())
+        if self.hand_figure is not None:
+            pos = pygame.mouse.get_pos()
+            fig = self.hand_figure.image
+            rect = fig.get_rect(center=pos)
+            self.screen.blit(fig, rect)
+        pygame.display.flip()
+
+        self.need_redraw = False
+
 
 # game = Game('white')

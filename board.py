@@ -142,6 +142,7 @@ class Board:
         self.hor_margin = 0
         self.cell_height = 0
         self.cell_width = 0
+        self.additional_margin_top = 50
         self.selected_cell_coords = None
 
         self.data = []
@@ -174,7 +175,11 @@ class Board:
                     if self.configs[name][r][c] is not None:
                         self.put_figure(self.configs[name][r][c](cell=self.cell(self.width - c - 1, self.height - r - 1)))
 
-    def draw(self, mouse_pos):
+    def draw(self, mouse_pos, status_text):
+        txt = pygame.font.Font(None, 50).render(status_text, True, Colors.WHITE)
+        rct = txt.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() - 25))
+        self.screen.blit(txt, rct)
+
         pygame.draw.rect(
             self.screen, self.color,
             [
@@ -211,7 +216,7 @@ class Board:
         self.hor_margin = 30
 
         self.cell_width = (self.screen.get_width() - self.hor_margin * 2) // self.width
-        self.cell_height = (self.screen.get_height() - self.vert_margin * 2) // self.height
+        self.cell_height = (self.screen.get_height() - self.vert_margin * 2 - self.additional_margin_top) // self.height
 
         if self.square_cells:
             if self.cell_width > self.cell_height:

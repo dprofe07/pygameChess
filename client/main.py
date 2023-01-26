@@ -23,13 +23,6 @@ while game.continue_game:
     for evt in pygame.event.get():
         game.handle_event(evt)
 
-    screen.fill(BG)
-    board.draw(pygame.mouse.get_pos())
-    if game.hand_figure is not None:
-        pos = pygame.mouse.get_pos()
-        fig = game.hand_figure.image
-        rect = fig.get_rect(center=pos)
-        screen.blit(fig, rect)
-    pygame.display.flip()
+    game.draw()
 
     time.sleep(0.01)
