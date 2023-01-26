@@ -47,7 +47,7 @@ class Room:
         return len(self.clients)
 
     def max_capacity(self):
-        return 2
+        return 100
     
     def add_client(self, client):
         if len(self.clients) >= self.max_capacity():

@@ -142,7 +142,7 @@ class Board:
         self.hor_margin = 0
         self.cell_height = 0
         self.cell_width = 0
-        self.selected_cell = None
+        self.selected_cell_coords = None
 
         self.data = []
 
@@ -237,3 +237,12 @@ class Board:
         if col >= self.width or row >= self.height:
             return None
         return self.cell(col, row)
+
+    @property
+    def selected_cell(self):
+        if self.selected_cell_coords is None:
+            return None
+        return self.cell(*self.selected_cell_coords)
+
+    def select_cell(self, cell):
+        self.selected_cell_coords = cell

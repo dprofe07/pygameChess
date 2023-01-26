@@ -52,9 +52,8 @@ class Cell:
                 surf.fill(DROP_BOARD)
 
         if self.board.selected_cell is not None:
-            sel_cell = self.board.cell(*self.board.selected_cell)
             if (
-                    (sel_cell.figure is not None and sel_cell.figure.can_move_to(self)) or
+                    (self.board.selected_cell.figure is not None and self.board.selected_cell.figure.can_move_to(self)) or
                     (self.game.hand_figure is not None and self.game.hand_figure.can_move_to(self))
             ):
                 if self.figure is None:
@@ -65,8 +64,9 @@ class Cell:
                     pygame.draw.polygon(surf, CAN_MOVE_TO_BOARD, [(sw, 0), (sw // 5 * 4, 0), (sw, sh // 5)])
                     pygame.draw.polygon(surf, CAN_MOVE_TO_BOARD, [(sw, sh), (sw // 5 * 4, sh), (sw, sh // 5 * 4)])
 
-            if sel_cell is self:
+            if self.board.selected_cell is self:
                 surf.fill(SELECTED_BOARD)
+
         if self.figure is not None:
             surf.blit(self.figure.image, self.figure.image.get_rect(center=[sw // 2, sh // 2]))
 
@@ -82,3 +82,6 @@ class Cell:
 
     def set_figure(self, figure):
         self.figure = figure
+
+    def coords(self):
+        return self.col, self.row

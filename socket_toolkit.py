@@ -6,6 +6,7 @@ if os.path.exists('/SERVER/is_server'):
     SERVER = '0.0.0.0'
 else:
     SERVER = '91.204.57.48'
+
 META_FIELD = 'META'
 UDATA_FIELD = 'UDATA'
 HEADER = 64
@@ -42,7 +43,7 @@ class Enum:
 
 
 T = Enum(['DISCONNECT', 'CREATE_ROOM', 'SUCCESS', 'REJECT',
-          'GET_ROOM_LIST', 'JOIN_ROOM', 'DEFEAT', 'MOVE'])
+          'GET_ROOM_LIST', 'JOIN_ROOM', 'DEFEAT', 'MOVE', 'CAN_START'])
 
 
 def message(text, author):

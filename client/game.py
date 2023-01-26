@@ -1,6 +1,9 @@
+import pygame
+
 from client.player import Player
 from client.socket_client import SocketClient
-from socket_toolkit import T, add_meta, PORT, SERVER
+from pyautogui import prompt, confirm
+from socket_toolkit import T, add_meta, PORT, SERVER, meta
 
 
 class Game:
@@ -14,35 +17,38 @@ class Game:
         self.board = None
         self.continue_ = False
         self.hand_figure = None
+        self.left_btn_pressed = False
         self.board_locked = False
         self.reversed_board = self.current_player is self.black_player
 
         self.client = SocketClient(SERVER, PORT)
-        lst = [int(i.replace('CHESS_', '')) for i in self.client.get_room_list()['rooms']]
-        if len(lst) == 0:
-            lst = [1]
-        n = lst[-1] + 1
-        if self.current_player is self.white_player:
+
+        create_room = confirm('Подключение к шахматам', 'Подключение', ['Создать игру', 'Присоединиться к игре']) == 'Создать игру'
+
+        room_name = prompt('Введите имя комнаты', 'Подключение', None)
+
+        if create_room:
             self.client.send({
-                'name': f'CHESS_{n}'
+                'name': room_name,
             }, T.CREATE_ROOM)
             data = self.client.recv()
             if T.REJECT(data):
                 raise Exception('Troubles')
-            self.client.send({
-                'name': f'CHESS_{n}'
-            }, T.JOIN_ROOM)
-        else:
-            self.client.send({
-                f'name': f'CHESS_{n - 1}'
-            }, T.JOIN_ROOM)
-            self.board_locked = True
+
+        self.client.send({
+            f'name': room_name,
+        }, T.JOIN_ROOM)
+
+        if not create_room:
+            self.client.send(meta(T.CAN_START))
+
+        self.board_locked = True
         self.client.start_loop(self.loop)
         self.screen = None
 
     def loop(self):
         msg = self.client.recv()
-        if T.MOVE(msg):
+        if T.MOVE(msg) and msg['sender'] != self.current_player.id:
             from_ = msg['from']
             to = msg['to']
             cell_from = self.board.cell(*from_)
@@ -55,6 +61,12 @@ class Game:
                 return
             cell_from.figure.move_to(cell_to, False)
             self.board_locked = False
+
+        elif T.CAN_START(msg):
+            if self.current_player is self.black_player:
+                self.client.send({}, T.CAN_START)
+            else:
+                self.board_locked = False
 
     def set_board(self, board):
         self.board = board
@@ -89,10 +101,94 @@ class Game:
     def record_move(self, from_, to):
         self.board_locked = True
         self.client.send({
+            'sender': self.current_player.id,
             'from': (self.board.width - 1 - from_.col, self.board.width - 1 - from_.row),
             'to': (self.board.height - 1 - to.col, self.board.height - 1 - to.row),
         }, T.MOVE)
         print(f'MOVE: {from_} -> {to}')
 
+    def handle_event(self, event):
+        if event.type == pygame.QUIT:
+            self.stop()
+        elif event.type == pygame.WINDOWRESIZED:
+            self.board.screen_resized()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if self.board_locked:
+                self.left_btn_pressed = False
+                self.set_standart_cursor()
+                return
 
-# game = Game('whit')
+            if event.button == pygame.BUTTON_LEFT:
+                self.left_btn_pressed = True
+                clicked_cell = self.board.cell_by_coords(event.pos)
+
+                if self.board.selected_cell is None:
+                    if (
+                            clicked_cell is None or
+                            clicked_cell.figure is None or
+                            clicked_cell.figure.player is not self.current_player
+                    ):
+                        self.board.select_cell(None)
+                        self.set_standart_cursor()
+                    else:
+                        self.board.select_cell(clicked_cell.coords())
+                        self.set_pointer_cursor()
+                else:
+                    if self.board.selected_cell.figure.can_move_to(clicked_cell):
+                        self.board.selected_cell.figure.move_to(clicked_cell)
+                        self.board.select_cell(None)
+                        self.set_standart_cursor()
+                    else:
+                        self.board.select_cell(clicked_cell.coords())
+                        self.set_pointer_cursor()
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if self.board_locked:
+                return
+
+            if event.button == pygame.BUTTON_LEFT:
+                self.left_btn_pressed = False
+
+                if self.hand_figure is not None:
+                    pos = pygame.mouse.get_pos()
+                    curr_cell = self.board.cell_by_coords(pos)
+
+                    if curr_cell is None or not self.hand_figure.can_move_to(curr_cell):
+                        self.board.selected_cell.figure = self.hand_figure
+                    else:
+                        self.hand_figure.move_to(curr_cell)
+                    self.hand_figure = None
+                    self.board.select_cell(None)
+
+        elif event.type == pygame.MOUSEMOTION:
+            if self.board_locked:
+                self.set_standart_cursor()
+                return
+
+            if self.left_btn_pressed:
+                if self.board.selected_cell is not None and self.hand_figure is None:
+                    if self.board.selected_cell is not None:
+                        self.hand_figure = self.board.selected_cell.figure
+                        self.board.selected_cell.figure = None
+            else:
+                curr_cell = self.board.cell_by_coords(event.pos)
+                if self.board.selected_cell is not None:
+                    if curr_cell is not None and self.board.selected_cell.figure.can_move_to(curr_cell) or self.board.selected_cell is curr_cell:
+                        self.set_pointer_cursor()
+                    else:
+                        self.set_standart_cursor()
+                else:
+                    if curr_cell is None or curr_cell.figure is None:
+                        self.set_standart_cursor()
+                    else:
+                        self.set_pointer_cursor()
+
+    @staticmethod
+    def set_pointer_cursor():
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+
+    @staticmethod
+    def set_standart_cursor():
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+# game = Game('white')
