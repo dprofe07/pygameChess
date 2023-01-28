@@ -12,7 +12,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 game.set_screen(screen)
 
 board = Board(game, screen, 1, 1, square_cells=True)
-board.load_config('std')
+board.load_config('mini')
 game.set_board(board)
 
 game.run()
@@ -26,3 +26,5 @@ while game.continue_game:
     game.draw()
 
     time.sleep(0.01)
+
+game.game_end()

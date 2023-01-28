@@ -22,6 +22,7 @@ class Game:
         self.left_btn_pressed = False
         self.board_locked = False
         self.connected = False
+        self.winner = True
         self.reversed_board = self.current_player is self.black_player
 
         self.client = SocketClient(SERVER, PORT)
@@ -78,6 +79,9 @@ class Game:
                 self.board_locked = False
 
             self.need_redraw = True
+        elif T.GAME_END(msg):
+            self.winner = True
+            self.game_end()
 
     def set_board(self, board):
         self.board = board
@@ -106,6 +110,9 @@ class Game:
         if not self.connected:
             return 'Ждём подключения оппонента'
         else:
+            if self.winner:
+                return "ПОБЕДА!"
+
             if self.board_locked:
                 return 'Ход соперника'
             else:
@@ -122,8 +129,8 @@ class Game:
         self.board_locked = True
         self.client.send({
             'sender': self.current_player.id,
-            'from': (self.board.width - 1 - from_.col, self.board.width - 1 - from_.row),
-            'to': (self.board.height - 1 - to.col, self.board.height - 1 - to.row),
+            'from': (self.board.width - 1 - from_.col, self.board.height - 1 - from_.row),
+            'to': (self.board.width - 1 - to.col, self.board.height - 1 - to.row),
         }, T.MOVE)
         print(f'MOVE: {from_} -> {to}')
 
@@ -229,6 +236,10 @@ class Game:
         pygame.display.flip()
 
         self.need_redraw = False
+
+    def game_end(self):
+        if not self.winner:
+            self.client.send({}, T.GAME_END)
 
 
 # game = Game('white')
