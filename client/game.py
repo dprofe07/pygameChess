@@ -261,7 +261,8 @@ class Game:
         if not self.winner:
             self.client.send({}, T.GAME_END)
 
-        alert('Вы проиграли', 'Проигрыш')
+            alert('Вы проиграли', 'Проигрыш')
+        self.client.close()
 
 
 # game = Game('white')
