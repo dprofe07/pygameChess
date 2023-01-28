@@ -3,7 +3,7 @@ from figures.figure import Figure
 
 class King(Figure):
     def __init__(self, cell, player):
-        super(King, self).__init__(cell, 'Король', player.get_image_name('king'), player, False, True)
+        super(King, self).__init__(cell, 'Король', player.get_image_name('king'), player, True)
 
     def can_move_to(self, cell, check_other_figures=True):
         if not cell.available_for(self, check_other_figures):

@@ -251,3 +251,8 @@ class Board:
 
     def select_cell(self, cell):
         self.selected_cell_coords = cell
+
+    def cells(self):
+        for r in range(self.height):
+            for c in range(self.width):
+                yield self.cell(c, r)

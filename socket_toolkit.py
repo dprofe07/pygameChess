@@ -43,7 +43,8 @@ class Enum:
 
 
 T = Enum(['DISCONNECT', 'CREATE_ROOM', 'SUCCESS', 'REJECT',
-          'GET_ROOM_LIST', 'JOIN_ROOM', 'DEFEAT', 'MOVE', 'CAN_START', 'GAME_END'])
+          'GET_ROOM_LIST', 'JOIN_ROOM', 'DEFEAT', 'MOVE', 'CONNECTED', 'GAME_END',
+          'CONNECTED_OK'])
 
 
 def message(text, author):

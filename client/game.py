@@ -1,4 +1,5 @@
 import pygame
+from pymsgbox import alert
 
 from client.player import Player
 from client.socket_client import SocketClient
@@ -22,7 +23,7 @@ class Game:
         self.left_btn_pressed = False
         self.board_locked = False
         self.connected = False
-        self.winner = True
+        self.winner = False
         self.reversed_board = self.current_player is self.black_player
 
         self.client = SocketClient(SERVER, PORT)
@@ -44,11 +45,12 @@ class Game:
         self.client.send({
             f'name': room_name,
         }, T.JOIN_ROOM)
-        self.client.recv()
+        d = self.client.recv()
+        if T.REJECT(d):
+            raise Exception('Troubles during join')
 
         if not create_room:
-            self.client.send({}, T.CAN_START)
-            self.connected = True
+            self.client.send({}, T.CONNECTED)
 
         self.board_locked = True
         self.client.start_loop(self.loop)
@@ -57,6 +59,9 @@ class Game:
 
     def loop(self):
         msg = self.client.recv()
+
+        print(f"GOT IN LOOP: {msg}")
+
         if T.MOVE(msg) and msg['sender'] != self.current_player.id:
             from_ = msg['from']
             to = msg['to']
@@ -71,11 +76,18 @@ class Game:
             cell_from.figure.move_to(cell_to, False)
             self.board_locked = False
             self.need_redraw = True
-        elif T.CAN_START(msg) and not self.connected:
+        elif T.CONNECTED(msg) and not self.connected:
+            print('GOT CONNECTED SIGNAL')
             self.connected = True
-            if self.current_player is self.black_player:
-                self.client.send({}, T.CAN_START)
-            else:
+            self.client.send({}, T.CONNECTED_OK)
+            if self.current_player is self.white_player:
+                self.board_locked = False
+
+            self.need_redraw = True
+        elif T.CONNECTED_OK(msg) and not self.connected:
+            print('GOT CONNECTED_OK SIGNAL')
+            self.connected = True
+            if self.current_player is self.white_player:
                 self.board_locked = False
 
             self.need_redraw = True
@@ -120,7 +132,15 @@ class Game:
 
     @property
     def continue_game(self):
-        return self.continue_
+        if not self.continue_:
+            return False
+
+        king_found = False
+        for cell in self.board.cells():
+            if cell.figure is not None and cell.figure.winner_mark and cell.figure.player is self.current_player:
+                king_found = True
+
+        return king_found
 
     def figure_eaten(self, figure):
         pass
@@ -240,6 +260,8 @@ class Game:
     def game_end(self):
         if not self.winner:
             self.client.send({}, T.GAME_END)
+
+        alert('Вы проиграли', 'Проигрыш')
 
 
 # game = Game('white')

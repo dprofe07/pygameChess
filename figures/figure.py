@@ -4,14 +4,15 @@ from client.game import game
 
 
 class Figure:
-    def __init__(self, cell, name, img_path, player, can_go_under_attack=True, show_attacks=False):
+    def __init__(self, cell, name, img_path, player, winner_mark=False):
         self.name = name
         self.cell = cell
         self.start_cell = cell
         self.player = player
         self.img_path = img_path
-        self.can_go_under_attack = can_go_under_attack
-        self.show_attacks = show_attacks
+        self.can_go_under_attack = not winner_mark
+        self.show_attacks = winner_mark
+        self.winner_mark = winner_mark
 
     @property
     def game(self):
@@ -59,3 +60,11 @@ class Figure:
         if 'player_id' in kw:
             kw.pop('player_id')
         return self.__class__(cell=cell, player=player, **kw)
+
+    def can_move_anywhere(self):
+        for r in range(self.board.height):
+            for c in range(self.board.width):
+                cell = self.board.cell(c, r)
+                if cell.figure is None and self.can_move_to(cell) or cell.figure is not None and self.can_eat_to(cell):
+                    return True
+        return False
