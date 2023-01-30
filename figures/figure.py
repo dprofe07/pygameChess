@@ -13,6 +13,7 @@ class Figure:
         self.can_go_under_attack = not winner_mark
         self.show_attacks = winner_mark
         self.winner_mark = winner_mark
+        self.image_buf = None
 
     @property
     def game(self):
@@ -24,9 +25,11 @@ class Figure:
 
     @property
     def image(self):
+        if self.image_buf is not None:
+            return self.image_buf
         img = pygame.image.load(self.img_path)
-
-        return pygame.transform.scale(img, [self.cell.width * 0.65, self.cell.height * 0.75])
+        self.image_buf = pygame.transform.scale(img, [self.cell.width * 0.65, self.cell.height * 0.75])
+        return self.image_buf
 
     def can_move_to(self, cell, check_other_figures=True):
         raise NotImplementedError()

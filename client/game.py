@@ -253,7 +253,7 @@ class Game:
             fig = self.hand_figure.image
             rect = fig.get_rect(center=pos)
             self.screen.blit(fig, rect)
-        pygame.display.flip()
+        pygame.display.flip()   
 
         self.need_redraw = False
 
