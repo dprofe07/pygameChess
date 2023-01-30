@@ -25,6 +25,6 @@ while game.continue_game:
 
     game.draw()
 
-    time.sleep(0.01)
+    time.sleep(0.05)
 
 game.game_end()

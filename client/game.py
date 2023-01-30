@@ -243,8 +243,8 @@ class Game:
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
     def draw(self):
-        if not self.need_redraw:
-            return
+        # if not self.need_redraw:
+        #     return
 
         self.screen.fill(BG)
         self.board.draw(pygame.mouse.get_pos(), self.get_status_text())
