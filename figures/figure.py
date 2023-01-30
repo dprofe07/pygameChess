@@ -26,7 +26,7 @@ class Figure:
     def image(self):
         img = pygame.image.load(self.img_path)
 
-        return pygame.transform.scale(img, [self.cell.width * 0.9, self.cell.height * 0.9])
+        return pygame.transform.scale(img, [self.cell.width * 0.65, self.cell.height * 0.75])
 
     def can_move_to(self, cell, check_other_figures=True):
         raise NotImplementedError()
