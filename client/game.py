@@ -94,6 +94,8 @@ class Game:
         elif T.GAME_END(msg):
             self.winner = True
             self.game_end()
+        elif T.DISCONNECT(msg):
+            self.client.close()
 
     def set_board(self, board):
         self.board = board
@@ -121,14 +123,12 @@ class Game:
     def get_status_text(self):
         if not self.connected:
             return 'Ждём подключения оппонента'
+        elif not self.continue_:
+            return 'ПОБЕДА' if self.winner else 'ПРОИГРЫШЬ'
+        if self.board_locked:
+            return 'Ход соперника'
         else:
-            if self.winner:
-                return "ПОБЕДА!"
-
-            if self.board_locked:
-                return 'Ход соперника'
-            else:
-                return 'Ваш ход'
+            return 'Ваш ход'
 
     @property
     def continue_game(self):
@@ -260,9 +260,7 @@ class Game:
     def game_end(self):
         if not self.winner:
             self.client.send({}, T.GAME_END)
-
-            alert('Вы проиграли', 'Проигрыш')
-        self.client.close()
+        #self.client.close()
 
 
 # game = Game('white')
