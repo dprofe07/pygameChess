@@ -38,7 +38,7 @@ class Board:
                 ],
             ],
 
-            '+camel': [
+            '+c': [
                 [
                     Rook(None, game.black_player),
                     Knight(None, game.black_player),
@@ -72,7 +72,7 @@ class Board:
                     Rook(None, game.white_player)
                 ],
             ],
-            '+camel+grasshopper': [
+            'big': [
                 [
                     Rook(None, game.black_player),
                     Knight(None, game.black_player),
@@ -121,14 +121,6 @@ class Board:
                 [Rook(None, game.white_player), Bishop(None, game.white_player), King(None, game.white_player),
                  Bishop(None, game.white_player), Rook(None, game.white_player)],
             ],
-            'test': [
-                [None, None, None, None, Pawn(None, game.black_player)],
-                [None] * 5,
-                [None, None, King(None, game.white_player), None, None],
-                [None] * 5,
-                [None] * 5,
-            ]
-
         }
 
         self.screen = screen
@@ -226,8 +218,12 @@ class Board:
                 self.cell_height = self.cell_width
                 self.vert_margin = (screen_h - self.cell_height * self.height) // 2
 
+
         if clear_data:
             self.data = [[Cell(self, y, x) for x in range(self.width)] for y in range(self.height)]
+
+        for i in self.cells():
+            i.need_redraw = True
 
     def cell_by_coords(self, coords):
         if (

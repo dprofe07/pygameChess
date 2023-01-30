@@ -9,6 +9,9 @@ class Cell:
         self.row = row
         self.col = col
         self.figure = None
+        self.need_redraw = True
+
+        self.saved_surf = None
 
     @property
     def game(self):
@@ -35,6 +38,20 @@ class Cell:
         return False
 
     def get_image(self, curr_cell, board_reversed=False):
+        if not self.need_redraw:
+            if (
+                    self.figure is not None and self.figure.show_attacks and self.attacked_by(self.game.other_player(self.figure.player)) or
+                    self.game.hand_figure is not None and curr_cell is not None and self is curr_cell and self.game.hand_figure.can_move_to(self) or
+                    self.board.selected_cell is not None and (self.board.selected_cell.figure is not None and self.board.selected_cell.figure.can_move_to(self)) or
+                        (self.game.hand_figure is not None and self.game.hand_figure.can_move_to(self)) or
+                    self.board.selected_cell is self
+            ):
+                self.need_redraw = True
+                return self.get_image(curr_cell, board_reversed)
+
+        if self.saved_surf is not None and not self.need_redraw:
+            return self.saved_surf
+
         surf = pygame.surface.Surface((self.board.cell_width, self.board.cell_height))
         sh = surf.get_height()
         sw = surf.get_width()
@@ -70,6 +87,8 @@ class Cell:
         if self.figure is not None:
             surf.blit(self.figure.image, self.figure.image.get_rect(center=[sw // 2, sh // 2]))
 
+        self.saved_surf = surf
+        self.need_redraw = False
         return surf
 
     @property

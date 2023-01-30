@@ -190,6 +190,8 @@ class Game:
                         self.board.select_cell(clicked_cell.coords())
                         self.set_pointer_cursor()
                 self.need_redraw = True
+                for c in self.board.cells():
+                    c.need_redraw = True
 
         elif event.type == pygame.MOUSEBUTTONUP:
             if self.board_locked:
@@ -210,6 +212,9 @@ class Game:
                     self.board.select_cell(None)
                     self.need_redraw = True
 
+                    for c in self.board.cells():
+                        c.need_redraw = True
+
         elif event.type == pygame.MOUSEMOTION:
             if self.board_locked:
                 self.set_standart_cursor()
@@ -221,6 +226,10 @@ class Game:
                     if self.board.selected_cell is not None:
                         self.hand_figure = self.board.selected_cell.figure
                         self.board.selected_cell.figure = None
+                        self.board.selected_cell.need_redraw = True
+
+                        for c in self.board.cells():
+                            c.need_redraw = True
             else:
                 curr_cell = self.board.cell_by_coords(event.pos)
                 if self.board.selected_cell is not None:
