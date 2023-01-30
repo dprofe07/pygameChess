@@ -146,6 +146,7 @@ class Server:
 
     def _destroy_room(self, name):
         if name in self.rooms:
+            self.rooms[name].close()
             del self.rooms[name]
 
     def next_idx(self):
@@ -169,13 +170,18 @@ class Server:
 
         while True:
             msg = h_recv(conn)
+            room = self.rooms.get(client.room_name, None)
+
             if T.DISCONNECT(msg):
+                if room: self._destroy_room(room.name)
                 client.close()
                 return
+            
             callback = self._check_for_meta(client, msg)
-            if callback or client.room_name is None:
+
+            if callback or room is None:
                 continue
-            room = self.rooms[client.room_name]
+                
             room.handle(client, msg)
 
     def _accept_loop(self):
@@ -195,8 +201,7 @@ class Server:
 
     def disconnect(self, conn):
         try:
-            h_send(conn, meta(T.DISCONNECT))
-            conn.close()
+            h_send(conn.recver, meta(T.DISCONNECT))
         except:
             self.log(f'Failed disconnecting from {conn}')
 
